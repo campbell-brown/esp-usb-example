@@ -1,6 +1,6 @@
 # ESP USB Forward Example
 
-A simple example project to forward data toUSB on an esp32c3.
+A simple example project to forward data to USB on an esp32c3.
 
 ## Hardware
 
@@ -39,4 +39,4 @@ The app should send a string of varying length every second.
 70 bytes:_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._.
 ```
 
-Note: the string length includes the newline character (\n) at the end.
+Note: the string length includes the newline character (`\n`) at the end.
