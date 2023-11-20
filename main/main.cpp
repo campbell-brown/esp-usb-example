@@ -50,7 +50,6 @@ extern "C" void app_main(void)
             bytes_written += usb_write(forward_buffer + bytes_written, bytes_left);
             usb_send();
         }
-        usb_send();
 
         if (++string_length > MAX_STRING_LENGTH)
         {
