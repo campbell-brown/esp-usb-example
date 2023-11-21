@@ -1,14 +1,10 @@
+#include "driver/usb_serial_jtag.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "hal/usb_serial_jtag_ll.h"
 
-#include <stdlib.h>
 
-
-#define DELAY_SHORT                 (20 / portTICK_PERIOD_MS)
-#define DELAY_LONG                  (1000 / portTICK_PERIOD_MS)
 #define BUFFER_LEN                  (1024)
-
 #define MIN_STRING_LENGTH           (60)
 #define MAX_STRING_LENGTH           (70)
 
@@ -22,8 +18,14 @@ static void usb_send(void);
 
 extern "C" void app_main(void)
 {
-    // Short delay for system to settle
-    vTaskDelay(DELAY_SHORT);
+    // Configure USB-CDC
+    usb_serial_jtag_driver_config_t config =
+    {
+        .tx_buffer_size = 1024,
+        .rx_buffer_size = 1024,
+    };
+
+    ESP_ERROR_CHECK(usb_serial_jtag_driver_install(&config));
 
     uint16_t string_length = MIN_STRING_LENGTH;
     while (true)
@@ -53,20 +55,14 @@ extern "C" void app_main(void)
             string_length = MIN_STRING_LENGTH;
         }
 
-        vTaskDelay(DELAY_LONG);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
 
 static size_t usb_write(const uint8_t *buffer, size_t length)
 {
-    int can_write = usb_serial_jtag_ll_txfifo_writable();
-    while (!can_write)
-    {
-        vTaskDelay(1);
-        can_write = usb_serial_jtag_ll_txfifo_writable();
-    }
-    return (size_t)usb_serial_jtag_ll_write_txfifo(buffer, length);
+    return usb_serial_jtag_write_bytes(buffer, length, 500 / portTICK_PERIOD_MS);
 }
 
 
