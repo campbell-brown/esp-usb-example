@@ -12,10 +12,6 @@
 static uint8_t forward_buffer[BUFFER_LEN] = { 0 };
 
 
-static size_t usb_write(const uint8_t *buffer, size_t length);
-static void usb_send(void);
-
-
 extern "C" void app_main(void)
 {
     // Configure USB-CDC
@@ -46,8 +42,9 @@ extern "C" void app_main(void)
         while (bytes_written < string_length)
         {
             size_t bytes_left = string_length - bytes_written;
-            bytes_written += usb_write(forward_buffer + bytes_written, bytes_left);
-            usb_send();
+            bytes_written += usb_serial_jtag_write_bytes(
+                forward_buffer + bytes_written, bytes_left, 500 / portTICK_PERIOD_MS);
+            usb_serial_jtag_ll_txfifo_flush();
         }
 
         if (++string_length > MAX_STRING_LENGTH)
@@ -57,16 +54,4 @@ extern "C" void app_main(void)
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-}
-
-
-static size_t usb_write(const uint8_t *buffer, size_t length)
-{
-    return usb_serial_jtag_write_bytes(buffer, length, 500 / portTICK_PERIOD_MS);
-}
-
-
-static void usb_send(void)
-{
-    usb_serial_jtag_ll_txfifo_flush();
 }
