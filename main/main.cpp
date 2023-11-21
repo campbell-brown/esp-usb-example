@@ -9,9 +9,6 @@
 #define DELAY_LONG                  (1000 / portTICK_PERIOD_MS)
 #define BUFFER_LEN                  (1024)
 
-#define UART_BUF_SIZE               (1024)
-#define UART_TIMEOUT                (300 / portTICK_PERIOD_MS)
-
 #define MIN_STRING_LENGTH           (60)
 #define MAX_STRING_LENGTH           (70)
 
