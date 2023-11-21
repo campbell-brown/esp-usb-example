@@ -38,14 +38,8 @@ extern "C" void app_main(void)
         forward_buffer[string_length - 1] = '\n';
 
         // Send all of the bytes by USB.
-        size_t bytes_written = 0;
-        while (bytes_written < string_length)
-        {
-            size_t bytes_left = string_length - bytes_written;
-            bytes_written += usb_serial_jtag_write_bytes(
-                forward_buffer + bytes_written, bytes_left, 500 / portTICK_PERIOD_MS);
-            usb_serial_jtag_ll_txfifo_flush();
-        }
+        usb_serial_jtag_write_bytes(forward_buffer, string_length, 500 / portTICK_PERIOD_MS);
+        usb_serial_jtag_ll_txfifo_flush();
 
         if (++string_length > MAX_STRING_LENGTH)
         {
